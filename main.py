@@ -72,6 +72,16 @@ class CesarCipherConversor(IConversor):
 
 
 # M
+def convert_text(text: str, conversor: dict[str, str]) -> str:
+    conversion = ""
+    for letter in text:
+          if letter not in text:
+               raise InvalidCharacterError(f"Invalid character: {letter}")
+          conversion += conversor[letter]
+
+    return conversion
+
+
 class CesarCipher(ICipher):
     def __init__(self, text: str, conversor: IConversor) -> None:
         self.__text = text.upper()
@@ -79,14 +89,10 @@ class CesarCipher(ICipher):
 
     @property
     def encrypt(self) -> str:
-        cesar_text = ""
-        for letter in self.__text:
-            if letter not in self.__conversor:
-                raise InvalidCharacterError(f"Invalid character: {letter}")
+        converted_text = convert_text(
+            text=self.__text, conversor=self.__conversor)
 
-            cesar_text += self.__conversor[letter]
-
-        return cesar_text
+        return converted_text
 
 
 class CesarCipherDecrypter(IDecrypter):
@@ -97,15 +103,10 @@ class CesarCipherDecrypter(IDecrypter):
     @property
     def decrypt(self) -> str:
         conversor = {v: k for k, v in self.__conversor.items()}
+        converted_text = convert_text(
+            text=self.__cesar_text, conversor=conversor)
 
-        natural_text = ""
-        for letter in self.__cesar_text:
-            if letter not in conversor:
-                raise InvalidCharacterError(f"Invalid character: {letter}")
-
-            natural_text += conversor[letter]
-
-        return natural_text
+        return converted_text
 
 
 class Main:
